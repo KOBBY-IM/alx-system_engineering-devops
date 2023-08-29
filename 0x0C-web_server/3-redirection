@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Script to create a redirection
+sudo apt-get update -y && sudo apt-get upgrade -y
+sudo apt-get install -y nginx
+sudo chown -R "$USER":"$USER" /var/www/
+sudo chown -R "$USER":"$USER" /etc/nginx
+echo "Hello World" > /var/www/html/index.nginx-debian.html
+redurl="	rewrite ^/redirect_me https://www.fosstechnix.com/how-to-install-nginx-on-ubuntu-22-04/ permanent;"
+sudo sed -i "53i $redurl" /etc/nginx/sites-available/default
+sudo service nginx restart
+sudo service nginx reload

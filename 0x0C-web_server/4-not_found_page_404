@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Script to create a redirection
+sudo apt-get update -y && sudo apt-get upgrade -y
+sudo apt-get install -y nginx
+sudo chown -R "$USER":"$USER" /var/www/
+sudo chown -R "$USER":"$USER" /etc/nginx
+sudo chown -R "$USER":"$USER" /usr/share/nginx/html/
+echo "Hello World" > /var/www/html/index.nginx-debian.html
+touch /usr/share/nginx/html/404.html
+echo "Ceci n'est pas une page" > /usr/share/nginx/html/404.html
+redurl="error_page 404 /404.html;"
+sudo sed -i "54i $redurl" /etc/nginx/sites-available/default
+redurl="location = /404.html {"
+sudo sed -i "55i $redurl" /etc/nginx/sites-available/default
+redurl="root /usr/share/nginx/html;"
+sudo sed -i "56i $redurl" /etc/nginx/sites-available/default
+redurl="internal;"
+sudo sed -i "57i $redurl" /etc/nginx/sites-available/default
+redurl="}"
+sudo sed -i "58i $redurl" /etc/nginx/sites-available/default
+sudo service nginx restart
+sudo service nginx reload
