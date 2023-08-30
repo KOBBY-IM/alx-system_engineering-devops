@@ -3,18 +3,26 @@ package { 'nginx':
   ensure => installed,
 }
 
-file_line { 'line':
-  ensure => 'present',
-  path   => '/etc/nginx/sites-available/default',
-  after  => 'server_name _;',
-  line   => 'return 301 https://www.fosstechnix.com/how-to-install-nginx-on-ubuntu-22-04$request_uri;',
-}
+file { '/etc/nginx/sites-available/default':
+  ensure => present,
+  content => "
+    server {
+      listen 80 default_server;
+      server_name _;
 
-file { '/var/www/html/index.html':
-  content => 'Hello World!',
+      location / {
+        return 200 'Hello World!';
+      }
+
+      location /redirect_me {
+        return 301 https://www.fosstechnix.com/how-to-install-nginx-on-ubuntu-22-04$request_uri;
+      }
+    }
+  ",
+  require => Package['nginx'],
 }
 
 service { 'nginx':
   ensure  => running,
-  require => [Package['nginx'], File_line['line']],
+  require => [Package['nginx'], File['/etc/nginx/sites-available/default']],
 }
