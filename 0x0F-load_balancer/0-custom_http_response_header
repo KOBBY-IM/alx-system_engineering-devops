@@ -1,7 +1,34 @@
 #!/usr/bin/env bash
-# Create a script to configure nginx on a new server
-# Configure nginx to have a custom header
+# Configure your Nginx server so that /redirect_me is redirecting to another page
 
-sudo sed -i '/server_name _/a add_header X-Served-By $HOSTNAME;' /etc/nginx/sites-enabled/default
-sudo nginx -t
-sudo service nginx restart
+apt-get -y update
+apt-get -y install nginx
+
+echo "Hello World!" > /var/www/html/index.nginx-debian.html
+
+# Create a new default configuration file
+echo "server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    root /var/www/html;
+    index index.html index.htm index.nginx-debian.html;
+
+    server_name _;
+
+    location / {
+        try_files \$uri \$uri/ =404;
+    }
+
+    location = /redirect_me {
+        return 301 https://www.fosstechnix.com/how-to-install-nginx-on-ubuntu-22-04;
+    }
+
+    error_page 404 /custom_404.html;
+
+	add_header X-Served-By $HOSTNAME;
+}" > /etc/nginx/sites-available/default
+
+echo "Ceci n'est pas une page" | sudo tee /var/www/html/custom_404.html > /dev/null
+
+service nginx restart
