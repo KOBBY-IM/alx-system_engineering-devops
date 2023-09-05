@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Installs and configures HAProxy
+
+# Install HAProxy
+sudo apt-get update
+sudo apt-get install -y haproxy
+
+# Enable HAProxy to be started by the init script
+sudo systemctl enable haproxy
+
+# Configure HAProxy to send traffic to web-01 and web-02
+echo "
+frontend front_request
+   bind *:80
+   stats uri /haproxy?stats
+   default_backend back_servers
+
+backend back_servers
+   balance roundrobin
+   server web-01 52.204.115.194 check
+   server web-02 34.204.76.160 check
+" | sudo tee /etc/haproxy/haproxy.cfg
+
+# Restart HAProxy to apply changes
+sudo service haproxy restart
