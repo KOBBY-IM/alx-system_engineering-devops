@@ -17,8 +17,8 @@ frontend front_request
 
 backend back_servers
    balance roundrobin
-   server web-01 52.204.115.194 check
-   server web-02 34.204.76.160 check
+   server web-01 52.204.115.194:80 check
+   server web-02 34.204.76.160:80 check
 " | sudo tee /etc/haproxy/haproxy.cfg
 
 # Restart HAProxy to apply changes
