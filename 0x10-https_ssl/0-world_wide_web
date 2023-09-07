@@ -2,36 +2,36 @@
 #script to display information about subdomains.
 
 # Function to display subdomain information
-display_info() {
-    local domain="$1"
-    local subdomain="$2"
-    local record_type="$3"
-    local destination="$4"
-    echo "The subdomain $subdomain is a $record_type record and points to $destination"
+fetch_dns_info() {
+    domain="$1"
+    subdomain="$2"
+
+    # Use dig to fetch DNS information for the subdomain
+    dns_info=$(dig "$subdomain.$domain" +short)
+
+    # Determine the record type (A or CNAME)
+    record_type=$(echo "$dns_info" | awk '{ if (NF == 1) { print "A" } else { print "CNAME" } }')
+
+    # Display the subdomain, record type, and destination
+    echo "The subdomain $subdomain is a $record_type record and points to $dns_info"
 }
 
 # Check if the correct number of arguments is provided
-if [ "$#" -lt 1 ]; then
-    echo "Usage: $0 <domain> [<subdomain>]"
+if [ $# -lt 1 ]; then
+    echo "Usage: $0 <domain> [subdomain]"
     exit 1
 fi
 
 domain="$1"
 
-# Default subdomains to audit
-subdomains=("www" "lb-01" "web-01" "web-02")
-
-# If subdomain is provided, only audit that subdomain
-if [ "$#" -eq 2 ]; then
+# If a subdomain is provided, fetch DNS info for that subdomain
+if [ $# -eq 2 ]; then
     subdomain="$2"
-    subdomains=("$subdomain")
+    fetch_dns_info "$domain" "$subdomain"
+else
+    # If no subdomain provided, fetch DNS info for default subdomains
+    fetch_dns_info "$domain" "www"
+    fetch_dns_info "$domain" "lb-01"
+    fetch_dns_info "$domain" "web-01"
+    fetch_dns_info "$domain" "web-02"
 fi
-
-# Loop through and display information for each subdomain
-for subdomain in "${subdomains[@]}"; do
-    record_type=$(nslookup "$subdomain.$domain" | awk '/^Name:/ {print $2}')
-    destination=$(nslookup "$subdomain.$domain" | awk '/^Address: / {print $2}')
-    
-    # Display information
-    display_info "$domain" "$subdomain" "$record_type" "$destination"
-done
