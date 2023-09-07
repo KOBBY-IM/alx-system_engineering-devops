@@ -34,12 +34,13 @@ defaults
         errorfile 504 /etc/haproxy/errors/504.http
 
 
-frontend neweb
-    bind *:80
-    mode http
-    default_backend neweb2
-backend neweb2
-    balance roundrobin
-    server 157965-web-01 52.204.115.194:80 check
-    server 157965-web-02 34.204.76.160:80 check
+frontend front_request
+   bind *:443 ssl crt /etc/letsencrypt/live/www.kobby.tech/kobby.tech.pem
+   stats uri /haproxy?stats
+   default_backend back_servers
+
+backend back_servers
+   balance roundrobin
+   server web-01 52.204.115.194:80 check
+   server web-02 34.204.76.160:80 check
 
