@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# This script installs and starts the nginx web server
+apt-get -y update 
+ln -sf /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
+service nginx restart
