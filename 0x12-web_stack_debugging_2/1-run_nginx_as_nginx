@@ -3,6 +3,9 @@
 # nginx must be running as nginx use
 # nginx must be listening on all active IPs on port 8080
 
+# Kill any running Apache2 processes
+pkill apache2
+
 # Changes owner & group like nginx
 chown nginx:nginx /etc/nginx/nginx.conf
 
