@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # configures the container to fit the above requirements
-# nginx must be running as nginx use
+# nginx must be running as nginx
 # nginx must be listening on all active IPs on port 8080
 
 # Kill any running Apache2 processes
