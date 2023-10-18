@@ -1,0 +1,29 @@
+erver {
+  2     listen 80 default_server;
+  3     listen [::]:80 default_server;
+  4 
+  5         #Use IP of server as domain name
+  6         server_name 52.204.115.194;
+  7 
+  8         # serve /airbnb-onepage/ route one Airbnb_clone_v2
+  9         location = /airbnb-onepage/ {
+ 10                 proxy_pass http://127.0.0.1:5000/airbnb-onepage/;
+ 11         }
+ 12 
+ 13     root /var/www/html;
+ 14     index index.html index.htm index.nginx-debian.html;
+ 15 
+ 16     server_name _;
+ 17 
+ 18     location / {
+ 19         try_files $uri $uri/ =404;
+ 20     }
+ 21 
+ 22     location = /redirect_me {
+ 23         return 301 https://www.fosstechnix.com/how-to-install-nginx-on-ubuntu-22-04;
+ 24     }
+ 25 
+ 26     error_page 404 /custom_404.html;
+ 27 
+ 28     add_header X-Served-By $hostname;
+ 29 }
