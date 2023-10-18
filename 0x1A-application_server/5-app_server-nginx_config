@@ -1,0 +1,49 @@
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+        #Use IP of server as domain name
+        server_name 52.204.115.194;
+
+        # serve /airbnb-onepage/ route one Airbnb_clone_v2
+        location = /airbnb-onepage/ {
+                proxy_pass http://127.0.0.1:5000/airbnb-onepage/;
+        }
+
+    # Serve /number_odd_or_even/ route on AirBnD_Clone_v2
+    location ~ /airbnb-dynamic/number_odd_or_even/(\d+)$ {
+        proxy_pass http://127.0.0.1:5001/number_odd_or_even/$1;
+    }
+
+    # Serve AirBnb_Clone_v3 API
+     location /api {
+        proxy_pass http://127.0.0.1:5002/api;
+     }
+
+    # Configure web_dynamic/2-hbnb.py of AirBnB_clone_v4 as root location
+    location / {
+        proxy_pass http://127.0.0.1:5003/2-hbnb;
+     }
+
+    # Serve static content for AirBnB_clone_v4
+    location /static {
+        alias web_dynamic/static/;
+     }
+
+    root /var/www/html;
+    index index.html index.htm index.nginx-debian.html;
+
+    server_name _;
+
+    #location / {
+    #   try_files $uri $uri/ =404;
+    #}
+
+    location = /redirect_me {
+        return 301 https://www.fosstechnix.com/how-to-install-nginx-on-ubuntu-22-04;
+    }
+
+    error_page 404 /custom_404.html;
+
+    add_header X-Served-By $hostname;
+}
